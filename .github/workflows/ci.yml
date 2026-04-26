@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Checkout
@@ -35,45 +35,45 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Prepare fallback references
-        shell: pwsh
+        shell: bash
         run: |
-          New-Item -ItemType Directory -Force -Path Resonite | Out-Null
-          Invoke-WebRequest https://github.com/resonite-modding-group/ResoniteModLoader/releases/latest/download/ResoniteModLoader.dll -OutFile Resonite\ResoniteModLoader.dll
-          Invoke-WebRequest https://github.com/resonite-modding-group/ResoniteModLoader/releases/latest/download/0Harmony.dll -OutFile Resonite\0Harmony.dll
+          mkdir -p Resonite
+          curl -sSfL -o Resonite/ResoniteModLoader.dll https://github.com/resonite-modding-group/ResoniteModLoader/releases/latest/download/ResoniteModLoader.dll
+          curl -sSfL -o Resonite/0Harmony.dll https://github.com/resonite-modding-group/ResoniteModLoader/releases/latest/download/0Harmony.dll
 
       - name: Restore
-        run: dotnet restore .\ResoniteLinkNetworkAccess.slnx
+        run: dotnet restore ./ResoniteLinkNetworkAccess.slnx
 
       - name: Verify formatting (dotnet format)
-        shell: pwsh
+        shell: bash
         run: |
-          dotnet format .\ResoniteLinkNetworkAccess.slnx whitespace --verify-no-changes --no-restore
-          dotnet format .\ResoniteLinkNetworkAccess.slnx style --verify-no-changes --no-restore --severity info
-          dotnet format .\ResoniteLinkNetworkAccess.slnx analyzers --verify-no-changes --no-restore --severity info
+          dotnet format ./ResoniteLinkNetworkAccess.slnx whitespace --verify-no-changes --no-restore
+          dotnet format ./ResoniteLinkNetworkAccess.slnx style --verify-no-changes --no-restore --severity info
+          dotnet format ./ResoniteLinkNetworkAccess.slnx analyzers --verify-no-changes --no-restore --severity info
 
       - name: Build
-        run: dotnet build .\ResoniteLinkNetworkAccess.slnx -c Release --no-restore
+        run: dotnet build ./ResoniteLinkNetworkAccess.slnx -c Release --no-restore
 
       - name: Test
-        run: dotnet test .\ResoniteLinkNetworkAccess.slnx -c Release --no-build --logger "console;verbosity=normal"
+        run: dotnet test ./ResoniteLinkNetworkAccess.slnx -c Release --no-build --logger "console;verbosity=normal"
 
       - name: Pack artifact
         if: startsWith(github.ref, 'refs/tags/v')
-        shell: pwsh
+        shell: bash
         run: |
-          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
-          Copy-Item ".\src\${{ env.PROJECT_NAME }}\bin\Release\${{ env.PROJECT_NAME }}.dll" ".\artifacts\"
+          mkdir -p artifacts
+          cp "./src/${{ env.PROJECT_NAME }}/bin/Release/${{ env.PROJECT_NAME }}.dll" ./artifacts/
 
       - name: Upload release artifacts
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v7
         with:
           name: ${{ env.PROJECT_NAME }}
-          path: artifacts\${{ env.PROJECT_NAME }}.dll
+          path: artifacts/${{ env.PROJECT_NAME }}.dll
           if-no-files-found: error
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" ".\artifacts\${{ env.PROJECT_NAME }}.dll" --verify-tag --generate-notes
+        run: gh release create "${{ github.ref_name }}" "./artifacts/${{ env.PROJECT_NAME }}.dll" --verify-tag --generate-notes
