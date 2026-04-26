@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ResoniteLinkNetworkAccess/ResoniteLinkNetworkAccess.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ResoniteLinkNetworkAccess.Tests/ResoniteLinkNetworkAccess.Tests.csproj" />
+  </Folder>
+</Solution>
