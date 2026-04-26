@@ -13,8 +13,8 @@ namespace ResoniteLinkNetworkAccess;
 /// </summary>
 public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 {
-    internal const string DefaultListenerHost = "localhost";
-    internal const int DefaultResoniteLinkAnnouncePort = 12512;
+    internal const string DefaultListenerHost = NetworkAccessSettings.DefaultListenerHost;
+    internal const int DefaultResoniteLinkAnnouncePort = NetworkAccessSettings.DefaultResoniteLinkAnnouncePort;
 
     private const string ModNamespace = "com.nekometer.esnya";
     private static readonly Assembly Assembly = typeof(ResoniteLinkNetworkAccessMod).Assembly;
@@ -85,10 +85,7 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 
     internal static string ResolveListenerHost(bool enabled, string? configuredHost)
     {
-        string host = configuredHost ?? string.Empty;
-        return !ShouldApplyListenerHostPatch(enabled, host)
-            ? DefaultListenerHost
-            : host.Trim();
+        return NetworkAccessSettings.ResolveListenerHost(enabled, configuredHost);
     }
 
     internal static string GetListenerHost()
@@ -100,7 +97,7 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 
     internal static bool ShouldApplyPatches(bool enabled)
     {
-        return enabled;
+        return NetworkAccessSettings.ShouldApplyPatches(enabled);
     }
 
     internal static bool ShouldApplyPatches()
@@ -110,7 +107,7 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 
     internal static bool ShouldApplyListenerHostPatch(bool enabled, string? configuredHost)
     {
-        return enabled && !string.IsNullOrWhiteSpace(configuredHost);
+        return NetworkAccessSettings.ShouldApplyListenerHostPatch(enabled, configuredHost);
     }
 
     internal static bool ShouldApplyListenerHostPatch()
@@ -122,9 +119,7 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 
     internal static bool ShouldApplyResoniteLinkAnnouncePatch(bool enabled, string? configuredHost, int configuredPort)
     {
-        return enabled
-            && !string.IsNullOrWhiteSpace(configuredHost)
-            && configuredPort is > 0 and <= IPEndPoint.MaxPort;
+        return NetworkAccessSettings.ShouldApplyResoniteLinkAnnouncePatch(enabled, configuredHost, configuredPort);
     }
 
     internal static bool ShouldApplyResoniteLinkAnnouncePatch()
@@ -137,10 +132,7 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
 
     internal static IPEndPoint ResolveResoniteLinkAnnounceEndpoint(bool enabled, string? configuredHost, int configuredPort)
     {
-        string host = configuredHost ?? string.Empty;
-        return !ShouldApplyResoniteLinkAnnouncePatch(enabled, host, configuredPort)
-            ? new IPEndPoint(IPAddress.Broadcast, DefaultResoniteLinkAnnouncePort)
-            : new IPEndPoint(ResolveHostAddress(host.Trim()), configuredPort);
+        return NetworkAccessSettings.ResolveResoniteLinkAnnounceEndpoint(enabled, configuredHost, configuredPort);
     }
 
     internal static IPEndPoint GetResoniteLinkAnnounceEndpoint()
@@ -262,16 +254,4 @@ public sealed class ResoniteLinkNetworkAccessMod : ResoniteMod
         return config is null ? fallback : config.TryGetValue(key, out T? value) ? value! : fallback;
     }
 
-    private static IPAddress ResolveHostAddress(string host)
-    {
-        if (IPAddress.TryParse(host, out IPAddress? address))
-        {
-            return address;
-        }
-
-        IPAddress[] addresses = Dns.GetHostAddresses(host);
-        return addresses.FirstOrDefault(static candidate => candidate.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-            ?? addresses.FirstOrDefault()
-            ?? throw new InvalidOperationException($"Host '{host}' did not resolve to an IP address.");
-    }
 }

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ResoniteLinkNetworkAccess\ResoniteLinkNetworkAccess.csproj" />
+    <Compile Include="..\..\src\Shared\NetworkAccessSettings.cs" Link="NetworkAccessSettings.cs" />
   </ItemGroup>
 
   <ItemGroup>

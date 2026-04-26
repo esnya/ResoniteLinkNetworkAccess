@@ -30,6 +30,12 @@
         "resolved": "0.11.6",
         "contentHash": "f33RkDtZO8VlGXCtmQIviOtxgnUdym9xx/b1p9h91CRGOsJFxCFOFK1FDbVt1OCf1aWwYejUFa2MOQyFWTFjbA=="
       },
+      "Resonite.GameLibs": {
+        "type": "Direct",
+        "requested": "[2026.4.16.1327, )",
+        "resolved": "2026.4.16.1327",
+        "contentHash": "E5ziTxgOKp3bu6tkqtUhKGTCQCTM8dNMCVn1aMmIHM7YcxYw3ls5fBhHpovBcCt5tEuDPrDexbXk3Bupn18+rQ=="
+      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.9.3, )",
@@ -111,8 +117,11 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
-      "resonitelinknetworkaccess": {
-        "type": "Project"
+      "resonitelinknetworkaccess.core": {
+        "type": "Project",
+        "dependencies": {
+          "Resonite.GameLibs": "[2026.4.16.1327, )"
+        }
       }
     }
   }

@@ -3,4 +3,8 @@
     <AssemblyName>ResoniteLinkNetworkAccess</AssemblyName>
     <RootNamespace>ResoniteLinkNetworkAccess</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\NetworkAccessSettings.cs" Link="NetworkAccessSettings.cs" />
+  </ItemGroup>
 </Project>

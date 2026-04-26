@@ -117,7 +117,6 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(FrooxEnginePresent)'!='true'">
-    <PackageReference Include="Resonite.GameLibs" GeneratePathProperty="true" />
     <Reference Include="ResoniteModLoader">
       <HintPath>$(MSBuildThisFileDirectory)Resonite\ResoniteModLoader.dll</HintPath>
       <Private>$(IsTestProject)</Private>
@@ -127,7 +126,7 @@
       <Private>$(IsTestProject)</Private>
     </Reference>
     <Reference Include="WatsonWebsocket">
-      <HintPath>$(MSBuildThisFileDirectory)Resonite\WatsonWebsocket.dll</HintPath>
+      <HintPath>$(PkgResonite_GameLibs)\ref\net9.0\WatsonWebsocket.dll</HintPath>
       <Private>$(IsTestProject)</Private>
     </Reference>
     <Reference Include="ResoniteHotReloadLib" Condition="'$(EnableHotReloadLibs)'=='true'">
@@ -149,6 +148,7 @@
 
   <ItemGroup>
     <PackageReference Include="MinVer" PrivateAssets="all" />
+    <PackageReference Include="Resonite.GameLibs" GeneratePathProperty="true" />
     <EditorConfigFiles Remove="$(MSBuildProjectDirectory)**\*.editorconfig" />
     <None Include="$(MSBuildThisFileDirectory)README.md" Link="README.md" />
     <None Include="$(MSBuildThisFileDirectory)LICENSE" Link="LICENSE" />
